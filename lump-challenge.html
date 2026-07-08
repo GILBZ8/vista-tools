@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can You Tell? | VISTA iQ Lump Challenge</title>
+<style>
+  :root{
+    --orange:#E2742E; --orange-d:#C95F1E; --ink:#26211C; --muted:#7A726A;
+    --page:#F4F1EC; --card:#FFFFFF; --line:#E7E0D6;
+    --blue:#5566C4; --blue-bg:#ECEEFA; --amber:#D99A2B; --amber-bg:#FBF1DC; --red:#C24A45; --red-bg:#FBEAE9;
+    --mono:'IBM Plex Mono', ui-monospace, 'Courier New', monospace,monospace; --sans:'Inter', system-ui, -apple-system, Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);font-family:var(--sans);color:var(--ink);line-height:1.55;
+    display:flex;justify-content:center;padding:24px 16px;min-height:100vh}
+  .wrap{width:100%;max-width:560px}
+  .topbar{background:var(--orange);border-radius:12px 12px 0 0;padding:11px 18px;display:flex;
+    align-items:center;justify-content:space-between}
+  .brand{font-family:var(--mono);font-weight:700;color:#fff;font-size:16px;letter-spacing:1px}
+  .brand span{opacity:.8;font-size:10px;letter-spacing:2px;margin-left:7px}
+  .dots{display:flex;gap:5px}
+  .dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.4)}
+  .dot.on{background:#fff} .dot.done{background:rgba(255,255,255,.85)}
+  .card{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;
+    padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+  h1{font-family:var(--mono);font-size:28px;font-weight:700;color:var(--orange);line-height:1.15}
+  h2{font-family:var(--mono);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .lead{color:var(--muted);font-size:15px;margin-top:10px}
+  .photo{position:relative;border-radius:13px;overflow:hidden;border:1px solid var(--line);
+    aspect-ratio:4/3;background:#EFE7DD;margin:14px 0}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo svg{width:100%;height:100%;display:block}
+  .photo .badge{position:absolute;top:10px;left:10px;background:rgba(38,33,28,.72);color:#fff;
+    font-family:var(--mono);font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.5px}
+  .vignette{background:#FAF7F2;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:16px}
+  .vig-row{display:flex;gap:10px;font-size:13.5px;padding:3px 0}
+  .vig-row b{font-family:var(--mono);font-weight:600;min-width:104px;font-size:11.5px;text-transform:uppercase;
+    letter-spacing:.4px;color:var(--ink);padding-top:2px}
+  .vig-row span{color:#4a443d}
+  .ask{font-size:13px;color:var(--muted);margin-bottom:10px}
+  .choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .choice{border:2px solid var(--line);background:#fff;border-radius:12px;padding:15px 10px;cursor:pointer;
+    text-align:center;font-weight:700;font-size:15px;transition:.12s;font-family:var(--sans)}
+  .choice .sub{display:block;font-weight:400;font-size:11.5px;color:var(--muted);margin-top:3px}
+  .choice.benign:hover{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+  .choice.susp:hover{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+  .reveal{margin-top:16px;border-radius:12px;padding:16px 18px;border:1px solid}
+  .reveal.correct{background:#EAF6EE;border-color:#A6D6B5}
+  .reveal.wrong{background:var(--red-bg);border-color:#E6A9A6}
+  .reveal .tag{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase}
+  .reveal .verdict{font-family:var(--mono);font-size:18px;font-weight:700;margin:5px 0;display:flex;
+    align-items:center;gap:10px;flex-wrap:wrap}
+  .reveal p{font-size:13.5px;color:#3a352f}
+  .pill{display:inline-block;font-family:var(--mono);font-size:10.5px;font-weight:700;padding:3px 9px;
+    border-radius:20px;text-transform:uppercase;letter-spacing:.5px}
+  .pill.b{background:var(--blue-bg);color:var(--blue)}
+  .pill.m{background:var(--amber-bg);color:#8a610f}
+  .pill.h{background:var(--red-bg);color:var(--red)}
+  .btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-family:var(--sans);
+    font-weight:700;font-size:15px;cursor:pointer;margin-top:14px;transition:.12s}
+  .btn-o{background:var(--orange);color:#fff}.btn-o:hover{background:var(--orange-d)}
+  .btn-ghost{background:#fff;color:var(--ink);border:2px solid var(--line)}
+  .scorebig{font-family:var(--mono);font-size:60px;font-weight:700;color:var(--orange);text-align:center;line-height:1;margin-top:6px}
+  .scorelbl{text-align:center;color:var(--muted);font-size:13.5px;margin-top:4px}
+  .statline{background:#FAF7F2;border:1px solid var(--line);border-radius:12px;padding:16px;margin:16px 0;text-align:center}
+  .statline .big{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--ink)}
+  .statline .cap{color:var(--muted);font-size:13px;margin-top:4px;line-height:1.5}
+  form label{display:block;font-size:12px;font-weight:600;margin:11px 0 5px;font-family:var(--mono);
+    text-transform:uppercase;letter-spacing:.5px}
+  form input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:var(--sans)}
+  form input:focus{outline:none;border-color:var(--orange)}
+  .disc{font-size:11px;color:#a59d93;margin-top:14px;text-align:center;line-height:1.5}
+  .fade{animation:f .25s ease}@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar">
+    <div class="brand">VISTA iQ<span>HT VET</span></div>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="card" id="stage"></div>
+</div>
+
+<script>
+const CASES = [
+  { photo:"", sig:"9 yr · Labrador · neutered male", loc:"Left flank, subcutaneous", size:"4 cm, slow over months",
+    feel:"Soft, smooth, freely moveable", owner:'"It’s been there forever, doesn’t bother him."',
+    art:"soft", answer:"susp", truth:"Mast cell tumor", risk:"h",
+    note:"The textbook “lipoma”: soft, moveable, slow. And malignant. Mast cell tumors are the great pretenders and routinely feel exactly like a benign fatty lump." },
+  { photo:"", sig:"5 yr · mixed breed · spayed female", loc:"Right shoulder, subcutaneous", size:"2 cm, stable",
+    feel:"Soft, doughy, moveable", owner:'"Noticed it a while ago, hasn’t changed."',
+    art:"soft", answer:"benign", truth:"Lipoma", risk:"b",
+    note:"This one really is a benign lipoma. But notice: it presents almost identically to case 1. By hand, you cannot reliably separate the two." },
+  { photo:"", sig:"7 yr · Boxer · neutered male", loc:"Dorsal neck, dermal", size:"1.5 cm, 3 weeks",
+    feel:"Firm, raised, slightly red", owner:'"It popped up fast and he keeps licking it."',
+    art:"firm", answer:"susp", truth:"Mast cell tumor", risk:"h",
+    note:"Fast onset, licking, a breed-predisposed Boxer. Suspicious, and correct. But plenty of mast cell tumors show none of these flags." },
+  { photo:"", sig:"3 yr · Staffordshire · female", loc:"Top of head, dermal", size:"1 cm, fast in 2 weeks",
+    feel:"Firm, raised, hairless “button”", owner:'"It grew really fast, I’m worried."',
+    art:"button", answer:"benign", truth:"Histiocytoma", risk:"b",
+    note:"Fast growth in a young dog screams cancer to the gut. It’s a benign histiocytoma that often regresses on its own. Speed alone fools you the other way too." },
+  { photo:"", sig:"11 yr · Golden Retriever · neutered male", loc:"Over the ribs, deep", size:"5 cm, slowly enlarging",
+    feel:"Firm, fixed to underlying tissue", owner:'"Thought it was a fatty lump like his last one."',
+    art:"firm", answer:"susp", truth:"Soft tissue sarcoma", risk:"h",
+    note:"“Fixed to underlying tissue” is the tell, but a busy exam reads it as another lipoma. The previous benign lump is exactly why the next one gets dismissed." },
+  { photo:"", sig:"8 yr · Beagle · spayed female", loc:"Inner thigh, subcutaneous", size:"3 cm, ~2 months",
+    feel:"Soft, smooth, moveable, painless", owner:'"Completely normal otherwise, eating great."',
+    art:"soft", answer:"susp", truth:"Soft tissue sarcoma", risk:"m",
+    note:"Soft, moveable, painless, healthy dog: every signal says “leave it.” It’s a low-grade sarcoma. This is the case that costs clinics the most, because it looks the safest." },
+];
+
+let idx=0, score=0, answered=false;
+const SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
+const stage=document.getElementById('stage'), dotsEl=document.getElementById('dots');
+
+function renderDots(){
+  dotsEl.innerHTML='';
+  for(let i=0;i<CASES.length;i++){const d=document.createElement('div');
+    d.className='dot'+(i<idx?' done':(i===idx?' on':''));dotsEl.appendChild(d);}
+}
+function fur(){
+  let s='';const cols=['#C9A985','#BD9A73','#D4B591','#B38E66'];
+  for(let i=0;i<140;i++){
+    const x=Math.random()*320, y=Math.random()*240, len=6+Math.random()*9, a=(Math.random()*0.5-0.25)+1.3;
+    const x2=x+Math.cos(a)*len, y2=y+Math.sin(a)*len;
+    s+='<line x1="'+x.toFixed(0)+'" y1="'+y.toFixed(0)+'" x2="'+x2.toFixed(0)+'" y2="'+y2.toFixed(0)+
+       '" stroke="'+cols[i%4]+'" stroke-width="2.2" stroke-linecap="round" opacity="0.85"/>';
+  }
+  return s;
+}
+function lumpArt(type){
+  let mass='';
+  if(type==='soft') mass='<ellipse cx="160" cy="150" rx="58" ry="34" fill="#C99A77" opacity=".55"/>'+
+    '<ellipse cx="160" cy="142" rx="52" ry="30" fill="#E8C4A0"/><ellipse cx="146" cy="132" rx="20" ry="11" fill="#F3D8BC" opacity=".8"/>';
+  if(type==='firm') mass='<ellipse cx="160" cy="152" rx="46" ry="36" fill="#C08F6B" opacity=".55"/>'+
+    '<ellipse cx="160" cy="144" rx="40" ry="32" fill="#E2B991"/><ellipse cx="148" cy="132" rx="15" ry="12" fill="#F0CFB0" opacity=".75"/>'+
+    '<ellipse cx="160" cy="148" rx="40" ry="32" fill="none" stroke="#B98C66" stroke-width="1" opacity=".4"/>';
+  if(type==='button') mass='<circle cx="160" cy="146" r="30" fill="#C77F66" opacity=".5"/>'+
+    '<circle cx="160" cy="142" r="26" fill="#E29C84"/><circle cx="160" cy="142" r="14" fill="#EFB9A4" opacity=".8"/>'+
+    '<circle cx="160" cy="142" r="26" fill="none" stroke="#C77F66" stroke-width="1.2" opacity=".5"/>';
+  return '<svg viewBox="0 0 320 240" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustrative clinical lump, representative only">'+
+    '<rect width="320" height="240" fill="#D9BE9C"/>'+fur()+
+    '<ellipse cx="160" cy="150" rx="120" ry="78" fill="#E9D2B4" opacity=".35"/>'+mass+
+    '</svg>';
+}
+function renderCase(){
+  answered=false; renderDots();
+  const c=CASES[idx];
+  stage.className='card fade';
+  const media = c.photo ? '<img src="'+c.photo+'" alt="clinical case">' : lumpArt(c.art);
+  stage.innerHTML=
+    '<h2>Case '+(idx+1)+' of '+CASES.length+'</h2>'+
+    '<div class="photo"><div class="badge">Real case</div>'+media+'</div>'+
+    '<div class="vignette">'+row('Signalment',c.sig)+row('Location',c.loc)+row('Size',c.size)+
+      row('On palpation',c.feel)+row('Owner says',c.owner)+'</div>'+
+    '<p class="ask">Your call, by sight and feel alone:</p>'+
+    '<div class="choices">'+
+      '<button type="button" class="choice benign" onclick="answer(\'benign\')">Benign<span class="sub">Monitor at home</span></button>'+
+      '<button type="button" class="choice susp" onclick="answer(\'susp\')">Suspicious<span class="sub">Investigate now</span></button>'+
+    '</div>';
+}
+function row(k,v){return '<div class="vig-row"><b>'+k+'</b><span>'+v+'</span></div>';}
+
+function answer(choice){
+  if(answered)return; answered=true;
+  const c=CASES[idx], correct=choice===c.answer; if(correct)score++;
+  const riskName=c.risk==='b'?'Benign':(c.risk==='m'?'Moderate risk':'High risk');
+  const rev=document.createElement('div');
+  rev.className='reveal '+(correct?'correct':'wrong')+' fade';
+  rev.innerHTML='<span class="tag" style="color:'+(correct?'#2f8a4e':'var(--red)')+'">'+
+    (correct?'You got it':'Most vets miss this')+'</span>'+
+    '<div class="verdict">'+c.truth+'<span class="pill '+c.risk+'">'+riskName+'</span></div><p>'+c.note+'</p>';
+  stage.querySelector('.choices').replaceWith(rev);
+  const btn=document.createElement('button');
+  btn.className='btn btn-o';
+  btn.textContent=idx<CASES.length-1?'Next case':'See my result';
+  btn.onclick=()=>{idx++;idx<CASES.length?renderCase():renderResult();};
+  stage.appendChild(btn);
+}
+function renderResult(){
+  renderDots(); stage.className='card fade';
+  stage.innerHTML=
+    '<h1>You had to guess.</h1>'+
+    '<p class="lead">And guessing is the problem. Here is how you did:</p>'+
+    '<div class="scorebig">'+score+'/'+CASES.length+'</div>'+
+    '<div class="scorelbl">cases called correctly by sight and feel</div>'+
+    '<div class="statline"><div class="big">~1 in 4</div>'+
+      '<div class="cap">benign-feeling masses are actually malignant. Palpation and sight cannot reliably tell them apart.</div></div>'+
+    '<p style="font-size:14.5px;color:#3a352f">VISTA iQ rules out cancer <b>in the scanned mass</b> with <b>98% NPV</b>, in a <b>40-second scan</b>. No guessing, no unnecessary aspirate, an answer in the room.</p>'+
+    '<div id="formwrap" style="margin-top:12px">'+
+      '<form onsubmit="return submitForm(event)">'+
+        '<label>Full name</label><input required placeholder="Dr. Jane Smith">'+
+        '<label>Clinic email</label><input required type="email" placeholder="you@clinic.com">'+
+        '<label>Clinic name <span style="color:#a59d93">(optional)</span></label><input placeholder="Riverside Animal Hospital">'+
+        '<button class="btn btn-o" type="submit">Send my case breakdown + book a Lunch &amp; Learn</button>'+
+      '</form>'+
+      '<button class="btn btn-ghost" onclick="shareChallenge()">Challenge a colleague to beat my score</button>'+
+      '<p style="text-align:center;margin-top:14px;font-size:13px"><a href="roi-calculator.html?utm_source=lump_challenge" style="color:var(--orange);font-weight:700;text-decoration:none">See what scanning these lumps is worth at your clinic &rsaquo;</a></p>'+
+    '</div>'+
+    '<p class="disc">Illustrative teaching cases representative of real presentations. For veterinary education, not a diagnostic tool. © HT Vet · VISTA iQ</p>';
+}
+function submitForm(e){e.preventDefault();
+  document.getElementById('formwrap').innerHTML=
+    '<div class="statline" style="background:#EAF6EE;border-color:#A6D6B5">'+
+    '<div class="big" style="color:#2f8a4e">You’re booked in.</div>'+
+    '<div class="cap">Your case breakdown is on its way. A VISTA iQ specialist will reach out to set your Lunch &amp; Learn.</div></div>'+
+    '<p style="text-align:center;margin-top:14px;font-size:13px"><a href="roi-calculator.html?utm_source=lump_challenge" style="color:var(--orange);font-weight:700;text-decoration:none">While you wait: see what scanning lumps is worth &rsaquo;</a></p>'+
+    '<p class="disc">[Prototype] In production this posts the lead to HubSpot (source: '+SRC+', score: '+score+'/'+CASES.length+') and triggers the L&amp;L nurture flow.</p>';
+  return false;}
+function shareChallenge(){
+  const txt='I scored '+score+'/'+CASES.length+' telling benign lumps from cancer by sight and feel. Can you beat me? '+location.href;
+  if(navigator.share){navigator.share({title:'VISTA iQ lump challenge',text:txt}).catch(function(){});}
+  else if(navigator.clipboard){navigator.clipboard.writeText(txt);alert('A challenge message was copied. Paste it to a colleague.');}
+}
+function restart(){idx=0;score=0;renderCase();}
+renderCase();
+</script>
+</body>
+</html>

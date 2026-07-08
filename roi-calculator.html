@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ROI Snapshot | VISTA iQ</title>
+<style>
+  :root{
+    --orange:#E2742E; --orange-d:#C95F1E; --ink:#26211C; --muted:#7A726A;
+    --page:#F4F1EC; --card:#FFFFFF; --line:#E7E0D6;
+    --blue:#5566C4; --blue-bg:#ECEEFA; --amber:#D99A2B; --amber-bg:#FBF1DC; --red:#C24A45; --red-bg:#FBEAE9;
+    --mono:'IBM Plex Mono', ui-monospace, 'Courier New', monospace,monospace; --sans:'Inter', system-ui, -apple-system, Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);font-family:var(--sans);color:var(--ink);line-height:1.5;
+    display:flex;justify-content:center;padding:24px 16px;min-height:100vh}
+  .wrap{width:100%;max-width:600px}
+  .topbar{background:var(--orange);border-radius:12px 12px 0 0;padding:11px 18px}
+  .brand{font-family:var(--mono);font-weight:700;color:#fff;font-size:16px;letter-spacing:1px}
+  .brand span{opacity:.8;font-size:10px;letter-spacing:2px;margin-left:7px}
+  .card{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;
+    padding:26px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+  h1{font-family:var(--mono);font-size:24px;font-weight:700;color:var(--orange);line-height:1.15}
+  .lead{color:var(--muted);font-size:14.5px;margin-top:8px}
+  .sec{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;
+    color:var(--muted);margin:24px 0 12px;text-align:center}
+  .sliderrow{margin:22px 0 4px}
+  .sliderrow .top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px}
+  .sliderrow label{font-family:var(--mono);font-size:12.5px;font-weight:600;text-transform:uppercase;letter-spacing:.5px}
+  .sliderrow .val{font-family:var(--mono);font-size:24px;font-weight:700}
+  input[type=range]{-webkit-appearance:none;width:100%;height:6px;border-radius:6px;background:var(--line);outline:none}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:24px;height:24px;border-radius:50%;
+    background:var(--orange);cursor:pointer;border:3px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.25)}
+  input[type=range]::-moz-range-thumb{width:24px;height:24px;border-radius:50%;background:var(--orange);cursor:pointer;border:3px solid #fff}
+  .hint{font-size:11.5px;color:#a59d93;margin-top:6px}
+  .hero{background:var(--ink);border-radius:14px;padding:22px;text-align:center;margin:16px 0 4px}
+  .hero .lbl{font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#c9b89f}
+  .hero .num{font-family:var(--mono);font-size:50px;font-weight:700;color:#fff;line-height:1.05;margin:4px 0}
+  .hero .sub{font-size:13.5px;color:#d9cdba}
+  .tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px}
+  .tier{border-radius:12px;padding:13px 10px}
+  .tier.b{background:var(--blue-bg)}.tier.m{background:var(--amber-bg)}.tier.h{background:var(--red-bg)}
+  .tier .t{font-family:var(--mono);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.5px}
+  .tier.b .t{color:var(--blue)}.tier.m .t{color:#8a610f}.tier.h .t{color:var(--red)}
+  .tier .n{font-family:var(--mono);font-size:19px;font-weight:700;margin-top:5px}
+  .tier .d{font-size:11px;color:#5b554e;margin-top:4px;line-height:1.4}
+  .tier .rev{font-family:var(--mono);font-size:13px;font-weight:700;margin-top:7px}
+  table{width:100%;border-collapse:collapse;margin-top:4px}
+  td{padding:10px 4px;font-size:13.5px;border-bottom:1px solid var(--line)}
+  td.r{text-align:right;font-family:var(--mono);font-weight:600}
+  td .mut{color:var(--muted);font-size:11.5px;font-family:var(--mono)}
+  tr.tot td{border-bottom:none;border-top:2px solid var(--ink);padding-top:12px;font-weight:700;font-size:16px}
+  tr.tot td.r{color:var(--orange);font-size:18px}
+  .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .price{border:1px solid var(--line);border-radius:12px;padding:14px 12px;text-align:center;position:relative}
+  .price.best{border:2px solid var(--orange)}
+  .price .badge{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;
+    font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.5px;white-space:nowrap}
+  .price .nm{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--muted)}
+  .price .amt{font-family:var(--mono);font-size:20px;font-weight:700;margin:6px 0 2px}
+  .price .sub{font-size:10.5px;color:var(--muted)}
+  .price .pb{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);margin-top:8px}
+  .price .pbl{font-size:10px;color:var(--muted)}
+  .btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-family:var(--sans);
+    font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;background:var(--orange);color:#fff;transition:.12s}
+  .btn:hover{background:var(--orange-d)}
+  .btn-ghost{background:#fff;color:var(--ink);border:2px solid var(--line);margin-top:10px}
+  form label{display:block;font-size:12px;font-weight:600;margin:11px 0 5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px}
+  form input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:var(--sans)}
+  form input:focus{outline:none;border-color:var(--orange)}
+  .disc{font-size:11px;color:#a59d93;margin-top:14px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><div class="brand">VISTA iQ<span>HT VET</span></div></div>
+  <div class="card">
+    <h1>Your VISTA iQ revenue, in one slider.</h1>
+    <p class="lead">Every lump that walks in is a clinical decision and a revenue decision. Here is what scanning them is worth.</p>
+
+    <div class="sliderrow">
+      <div class="top"><label>Lumps &amp; bumps per month</label><span class="val" id="lumpVal">40</span></div>
+      <input type="range" id="lumps" min="5" max="150" step="5" value="40" aria-label="Lumps and bumps seen per month">
+      <div class="hint">The average single-site clinic sees 30 to 60 a month.</div>
+    </div>
+
+    <div class="hero">
+      <div class="lbl">Added revenue per year with VISTA iQ</div>
+      <div class="num" id="annual">$120,000</div>
+      <div class="sub" id="monthly">about $10,000 every month</div>
+      <div style="font-size:11px;color:#c9b89f;margin-top:6px">illustrative estimate, based on your inputs</div>
+    </div>
+
+    <div class="sec">Expected revenue per result</div>
+    <div class="tiers">
+      <div class="tier b"><div class="t">Low · 60%</div><div class="n" id="t1n">24</div>
+        <div class="d">1/50 malignant. 98% NPV: monitor at home.</div><div class="rev" style="color:var(--blue)" id="t1r">$50 ea</div></div>
+      <div class="tier m"><div class="t">Mod · 30%</div><div class="n" id="t2n">12</div>
+        <div class="d">1/4 malignant. FNA, ~1/4 to removal.</div><div class="rev" style="color:#8a610f" id="t2r">$446 ea</div></div>
+      <div class="tier h"><div class="t">High · 10%</div><div class="n" id="t3n">4</div>
+        <div class="d">2/3 malignant. Urgent FNA, ~2/3 removal.</div><div class="rev" style="color:var(--red)" id="t3r">$866 ea</div></div>
+    </div>
+
+    <div class="sec">Monthly breakdown</div>
+    <table>
+      <tr><td>Scans revenue <span class="mut" id="f1">40 × $50</span></td><td class="r" id="v1">$2,000</td></tr>
+      <tr><td>In-house FNAs <span class="mut" id="f2">8 × $66</span></td><td class="r" id="v2">$528</td></tr>
+      <tr><td>Send-out FNAs <span class="mut" id="f3">8 × $225</span></td><td class="r" id="v3">$1,800</td></tr>
+      <tr><td>Mass removals <span class="mut" id="f4">5.7 × $1,000</span></td><td class="r" id="v4">$5,670</td></tr>
+      <tr class="tot"><td>Total income per month</td><td class="r" id="vtot">$10,000</td></tr>
+    </table>
+
+    <div class="sec">Pricing &amp; payback</div>
+    <div class="pricing">
+      <div class="price best"><div class="badge">Best value</div><div class="nm">All inclusive</div>
+        <div class="amt">$12,000</div><div class="sub">3 yrs service</div>
+        <div class="pb" id="pb1">&lt;1 mo</div><div class="pbl">to pay off</div></div>
+      <div class="price"><div class="nm">Purchase + service</div>
+        <div class="amt">$6,000</div><div class="sub">+ $200/mo</div>
+        <div class="pb" id="pb2">&lt;1 mo</div><div class="pbl">to pay off</div></div>
+      <div class="price"><div class="nm">Monthly lease</div>
+        <div class="amt">$550</div><div class="sub">per month</div>
+        <div class="pb" id="pb3">18×</div><div class="pbl">× monthly lease</div></div>
+    </div>
+
+    <div id="formwrap" style="margin-top:18px">
+      <form onsubmit="return submitForm(event)">
+        <label>Clinic name</label><input required placeholder="Riverside Animal Hospital">
+        <label>Clinic email</label><input required type="email" placeholder="you@clinic.com">
+        <button class="btn" type="submit">Email my full ROI report + book a demo</button>
+      </form>
+      <p style="text-align:center;margin-top:12px;font-size:13px"><a href="readiness-score.html?utm_source=roi" style="color:var(--orange);font-weight:700;text-decoration:none">Not ready for a demo? Take the 60-second readiness check &rsaquo;</a></p>
+    </div>
+    <p class="disc">Model mirrors the VISTA iQ ROI report: each 40-second scan returns a low / moderate / high cancer-risk result (60% / 30% / 10%). Per-result revenue ($50 / $446 / $866) reconciles to the monthly breakdown of scans, FNAs (50% in-house at $66, 50% send-out at $225) and mass removals ($1,000). Payback based on the $12,000 all-inclusive option. © HT Vet · VISTA iQ</p>
+  </div>
+</div>
+
+<script>
+const SCAN=50,FNA_IN=66,FNA_OUT=225,REMOVE=1000,DEVICE=12000;
+const SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
+const fmt=n=>'$'+Math.round(n).toLocaleString();
+function calc(){
+  const L=+document.getElementById('lumps').value;
+  const low=L*0.6, mod=L*0.3, high=L*0.1;
+  const fnas=mod+high;
+  const removals=0.25*mod + (2/3)*high;
+  const v1=L*SCAN, v2=fnas*0.5*FNA_IN, v3=fnas*0.5*FNA_OUT, v4=removals*REMOVE;
+  const monthly = v1+v2+v3+v4;
+  const annual=monthly*12;
+  document.getElementById('lumpVal').textContent=L;
+  document.getElementById('annual').textContent=fmt(annual);
+  document.getElementById('monthly').textContent='about '+fmt(monthly)+' every month';
+  document.getElementById('t1n').textContent=Math.round(low);
+  document.getElementById('t2n').textContent=Math.round(mod);
+  document.getElementById('t3n').textContent=Math.round(high);
+  document.getElementById('f1').textContent=L+' × $50';
+  document.getElementById('f2').textContent=Math.round(fnas*0.5)+' × $66';
+  document.getElementById('f3').textContent=Math.round(fnas*0.5)+' × $225';
+  document.getElementById('f4').textContent=removals.toFixed(1)+' × $1,000';
+  document.getElementById('v1').textContent=fmt(v1);
+  document.getElementById('v2').textContent=fmt(v2);
+  document.getElementById('v3').textContent=fmt(v3);
+  document.getElementById('v4').textContent=fmt(v4);
+  document.getElementById('vtot').textContent=fmt(v1+v2+v3+v4);
+  const pb=DEVICE/monthly;
+  document.getElementById('pb1').textContent = pb<1?'<1 mo':Math.ceil(pb)+' mo';
+  const pb2=6000/Math.max(1,(monthly-200));
+  document.getElementById('pb2').textContent = pb2<1?'<1 mo':Math.ceil(pb2)+' mo';
+  document.getElementById('pb3').textContent = Math.round(monthly/550)+'×';
+}
+document.getElementById('lumps').addEventListener('input',calc);
+function submitForm(e){e.preventDefault();
+  document.getElementById('formwrap').innerHTML=
+    '<div class="hero" style="background:#1f6b3f;margin:0"><div class="num" style="font-size:28px">Report sent.</div>'+
+    '<div class="sub">Check your inbox. A VISTA iQ specialist will reach out to book your demo.</div></div>'+
+    '<p class="disc">[Prototype] In production this posts to HubSpot (source: '+SRC+') and emails the personalized PDF.</p>';
+  return false;}
+calc();
+</script>
+</body>
+</html>

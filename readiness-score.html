@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cancer-Readiness Score | VISTA iQ</title>
+<style>
+  :root{
+    --orange:#E2742E; --orange-d:#C95F1E; --ink:#26211C; --muted:#7A726A;
+    --page:#F4F1EC; --card:#FFFFFF; --line:#E7E0D6;
+    --blue:#5566C4; --amber:#D99A2B; --red:#C24A45;
+    --mono:'IBM Plex Mono', ui-monospace, 'Courier New', monospace,monospace; --sans:'Inter', system-ui, -apple-system, Arial,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);font-family:var(--sans);color:var(--ink);line-height:1.5;
+    display:flex;justify-content:center;padding:24px 16px;min-height:100vh}
+  .wrap{width:100%;max-width:560px}
+  .topbar{background:var(--orange);border-radius:12px 12px 0 0;padding:11px 18px;display:flex;justify-content:space-between;align-items:center}
+  .brand{font-family:var(--mono);font-weight:700;color:#fff;font-size:16px;letter-spacing:1px}
+  .brand span{opacity:.8;font-size:10px;letter-spacing:2px;margin-left:7px}
+  .pbar{width:120px;height:6px;background:rgba(255,255,255,.35);border-radius:6px;overflow:hidden}
+  .pbar i{display:block;height:100%;background:#fff;width:0;transition:.3s}
+  .card{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;
+    padding:26px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
+  h1{font-family:var(--mono);font-size:25px;font-weight:700;color:var(--orange);line-height:1.15}
+  .qn{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .qtext{font-size:19px;font-weight:600;margin:8px 0 18px;line-height:1.35}
+  .opt{border:2px solid var(--line);background:#fff;border-radius:12px;padding:14px 16px;cursor:pointer;
+    font-size:15px;font-weight:500;margin-bottom:10px;transition:.12s}
+  .opt:hover{border-color:var(--orange);background:#FCF3EC}
+  .lead{color:var(--muted);font-size:15px;margin-top:8px}
+  .gauge{margin:22px auto 6px;width:200px;height:110px;position:relative}
+  .scoreNum{font-family:var(--mono);font-size:56px;font-weight:700;text-align:center;line-height:1}
+  .scoreLbl{text-align:center;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:2px}
+  .tier{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid}
+  .tier .tg{font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+  .tier .tt{font-size:17px;font-weight:700;margin:4px 0}
+  .tier p{font-size:14px;color:#3a352f}
+  .recs{margin:14px 0}
+  .rec{display:flex;gap:10px;font-size:14px;padding:6px 0;align-items:flex-start}
+  .rec b{color:var(--orange);font-family:var(--mono);font-weight:700}
+  .opp{background:var(--ink);border-radius:12px;padding:18px;text-align:center;margin:16px 0}
+  .opp .big{font-family:var(--mono);font-size:30px;font-weight:700;color:#fff}
+  .opp .cap{color:#d9cdba;font-size:13px;margin-top:4px}
+  .btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-family:var(--sans);
+    font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;background:var(--orange);color:#fff;transition:.12s}
+  .btn:hover{background:var(--orange-d)}
+  .btn-ghost{background:#fff;color:var(--ink);border:2px solid var(--line);margin-top:10px}
+  form label{display:block;font-size:12px;font-weight:600;margin:11px 0 5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px}
+  form input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:var(--sans)}
+  form input:focus{outline:none;border-color:var(--orange)}
+  .disc{font-size:11px;color:#a59d93;margin-top:14px;text-align:center;line-height:1.5}
+  .fade{animation:f .25s ease}@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><div class="brand">VISTA iQ<span>HT VET</span></div>
+    <div class="pbar" role="progressbar" aria-label="Assessment progress"><i id="pbar"></i></div></div>
+  <div class="card" id="stage"></div>
+</div>
+
+<script>
+const Q=[
+  { q:"When a dog presents with a new lump, what happens by default?",
+    a:[["We recommend an aspirate every time",3],["Depends on the owner's budget",1],["We watch and recheck in a few weeks",0],["We refer it out",1]] },
+  { q:"What share of owners decline an aspirate over cost?",
+    a:[["Under 10%",3],["10 to 30%",2],["30 to 50%",1],["More than half",0]] },
+  { q:"How do you rule cancer out in a mass today?",
+    a:[["In-house cytology, same day",3],["Send-out cytology",2],["Visual and palpation, mostly",0],["We don't have a consistent way",0]] },
+  { q:"How long until you have a cytology answer?",
+    a:[["Same day",3],["2 to 3 days",2],["4 to 7 days",1],["Over a week",0]] },
+  { q:"Roughly how many lumps and bumps do you see a month?",
+    a:[["Under 20",0],["20 to 50",1],["50 to 100",2],["Over 100",3]], vol:true },
+  { q:"Can you triage a mass for cancer risk in the room?",
+    a:[["Yes, in minutes",3],["Sort of, with extra steps",1],["No, not really",0],["Only by sending out",1]] },
+  { q:"How often does a benign-looking mass turn out malignant?",
+    a:[["I track it, it's real",3],["Sometimes, it surprises us",1],["Rarely in my experience",0],["Honestly not sure",0]] },
+  { q:"Biggest barrier to catching cancer earlier?",
+    a:[["Owner cost objections",1],["Time and workflow",1],["No in-room tooling",0],["We're in good shape",3]] },
+];
+let i=0,score=0,max=Q.length*3,volIdx=2;
+const SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
+const stage=document.getElementById('stage'), pbar=document.getElementById('pbar');
+
+function renderQ(){
+  pbar.style.width=(i/Q.length*100)+'%';
+  stage.className='card fade';
+  const o=Q[i];
+  stage.innerHTML='<div class="qn">Question '+(i+1)+' of '+Q.length+'</div>'+
+    '<div class="qtext">'+o.q+'</div>'+
+    o.a.map((opt,k)=>'<button type="button" class="opt" style="display:block;width:100%;text-align:left;font-family:var(--sans)" onclick="pick('+k+')">'+opt[0]+'</button>').join('');
+}
+function pick(k){
+  const o=Q[i];
+  score+=o.a[k][1];
+  if(o.vol) volIdx=k;
+  i++;
+  i<Q.length?renderQ():renderResult();
+}
+function renderResult(){
+  pbar.style.width='100%';
+  stage.className='card fade';
+  const pct=Math.round(score/max*100);
+  let tg,tt,col,bg,note,recs;
+  if(pct<45){tg='Major gap';tt='Cancer is slipping past your front door';col='var(--red)';bg='#FBEAE9';
+    note="Today, masses are mostly judged by sight and feel, and cost objections are sending cases out untriaged. That is exactly where malignancies hide and revenue leaks.";
+    recs=["Put an in-room, 40-second cancer triage on every lump","Remove the cost objection that kills aspirates","Stop the watch-and-recheck cases that should be acted on"];
+  } else if(pct<72){tg='Room to tighten';tt='Solid instincts, leaky process';col='#8a610f';bg='#FBF1DC';
+    note="You act on masses, but the path is slow or inconsistent, and a share of owners still walk without answers. A faster in-room step closes that gap.";
+    recs=["Bring cytology decisions into the same visit","Convert the owners who currently decline","Make triage consistent across every vet on the floor"];
+  } else {tg='Ahead of the curve';tt='Strong, now scale the advantage';col='#2f8a4e';bg='#EAF6EE';
+    note="You already treat masses seriously. The opportunity is throughput and proof: catch more, faster, and turn it into a visible clinic service.";
+    recs=["Standardize the workflow you already do well","Market cancer screening as a clinic service","Use scan data to drive earlier interventions"];
+  }
+  const vols=[15,35,75,120][volIdx];
+  const opp=Math.round(vols*250*12/1000)*1000;
+  stage.innerHTML=
+    '<h1>Your Cancer-Readiness Score</h1>'+
+    '<div class="scoreNum" style="color:'+col+'">'+pct+'</div><div class="scoreLbl">out of 100</div>'+
+    '<div class="tier" style="background:'+bg+';border-color:'+col+'33">'+
+      '<div class="tg" style="color:'+col+'">'+tg+'</div><div class="tt">'+tt+'</div><p>'+note+'</p></div>'+
+    '<div class="recs">'+recs.map((r,n)=>'<div class="rec"><b>'+(n+1)+'</b><span>'+r+'</span></div>').join('')+'</div>'+
+    '<div class="opp"><div class="big">~'+('$'+opp.toLocaleString())+'/yr</div>'+
+      '<div class="cap">directional estimate of revenue VISTA iQ could add at your lump volume</div></div>'+
+    '<p style="text-align:center;margin:-4px 0 12px;font-size:13px"><a href="roi-calculator.html?utm_source=readiness" style="color:var(--orange);font-weight:700;text-decoration:none">See the full revenue math &rsaquo;</a></p>'+
+    '<div id="formwrap"><form onsubmit="return submitForm(event)">'+
+      '<label>Full name</label><input required placeholder="Dr. Jane Smith">'+
+      '<label>Clinic email</label><input required type="email" placeholder="you@clinic.com">'+
+      '<label>Clinic name</label><input required placeholder="Riverside Animal Hospital">'+
+      '<button class="btn" type="submit">Get my full report + book a Lunch &amp; Learn</button></form>'+
+      '<button class="btn btn-ghost" onclick="restart()">Start over</button></div>'+
+    '<p class="disc">Directional self-assessment for veterinary teams. Revenue estimate uses the VISTA iQ ROI model (~$250 per lump scanned). © HT Vet · VISTA iQ</p>';
+}
+function submitForm(e){e.preventDefault();
+  document.getElementById('formwrap').innerHTML=
+    '<div class="opp" style="background:#1f6b3f"><div class="big" style="font-size:26px">You’re booked in.</div>'+
+    '<div class="cap">Your full readiness report is on its way. A VISTA iQ specialist will reach out to set your Lunch &amp; Learn.</div></div>'+
+    '<p class="disc">[Prototype] In production this posts to HubSpot (source: '+SRC+', score: '+Math.round(score/max*100)+'/100) and triggers the nurture flow.</p>';
+  return false;}
+function restart(){i=0;score=0;renderQ();}
+renderQ();
+</script>
+</body>
+</html>
