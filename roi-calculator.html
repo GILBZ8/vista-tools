@@ -66,6 +66,13 @@
   tr.tot td{border-bottom:none;border-top:2px solid var(--ink);padding-top:12px;font-weight:700;font-size:16px}
   tr.tot td.r{color:var(--or);font-size:18px}
   .pricing{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .pricing.two{grid-template-columns:repeat(2,1fr);gap:12px}
+  .netbox{border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .netrow{display:flex;justify-content:space-between;align-items:baseline;padding:6px 0;font-size:13.5px;color:#394046}
+  .netrow b{font-family:var(--mono);font-weight:700;color:var(--ink)}
+  .netrow.net{border-top:2px solid var(--ink);margin-top:6px;padding-top:11px;font-size:15px;font-weight:700;color:var(--ink)}
+  .netrow.net b{color:var(--or);font-size:18px}
+  .netnote{font-size:11.5px;color:var(--mut);margin-top:8px}
   .price{border:1px solid var(--line);border-radius:12px;padding:14px 12px;text-align:center;position:relative}
   .price.best{border:2px solid var(--or)}
   .price .badge{position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--or);color:#fff;
@@ -104,7 +111,7 @@
 
     <div class="sliderrow">
       <div class="top"><label>Lumps &amp; bumps per month</label><span class="val" id="lumpVal">40</span></div>
-      <input type="range" id="lumps" min="5" max="150" step="5" value="40" aria-label="Lumps and bumps seen per month">
+      <input type="range" id="lumps" min="0" max="100" step="5" value="40" aria-label="Lumps and bumps seen per month">
       <div class="hint">Drag the slider to match your clinic's caseload.</div>
     </div>
 
@@ -135,27 +142,32 @@
     </table>
 
     <div class="sec">Pricing &amp; payback</div>
-    <div class="pricing">
+    <div class="pricing two">
       <div class="price best"><div class="badge">Best value</div><div class="nm">All inclusive</div>
-        <div class="amt">$12,000</div><div class="sub">3 yrs service</div>
+        <div class="amt">$14,000</div><div class="sub">3 yrs service included</div>
         <div class="pb" id="pb1">&lt;1 mo</div><div class="pbl">to pay off</div></div>
-      <div class="price"><div class="nm">Purchase + service</div>
-        <div class="amt">$6,000</div><div class="sub">+ $200/mo</div>
-        <div class="pb" id="pb2">&lt;1 mo</div><div class="pbl">to pay off</div></div>
       <div class="price"><div class="nm">Monthly lease</div>
         <div class="amt">$550</div><div class="sub">per month</div>
         <div class="pb" id="pb3">18&times;</div><div class="pbl">&times; monthly lease</div></div>
     </div>
 
+    <div class="sec">Year one, after the device</div>
+    <div class="netbox">
+      <div class="netrow"><span>Added revenue, year one</span><b id="y1rev">$119,936</b></div>
+      <div class="netrow"><span>Less all inclusive device</span><b id="y1dev">&minus;$14,000</b></div>
+      <div class="netrow net"><span>Net in year one</span><b id="y1net">$105,936</b></div>
+      <div class="netnote" id="y1note">Pays for itself in under a month, then keeps running.</div>
+    </div>
+
     <div id="endblock" style="margin-top:18px"></div>
-    <p class="disc">Model mirrors the VISTA iQ ROI report: each 40 second scan returns a low / moderate / high cancer risk result (60% / 30% / 10%). Per result revenue ($50 / $446 / $866) reconciles to the monthly breakdown of scans, FNAs (50% in-house at $66, 50% send-out at $225) and mass removals ($1,000). Payback based on the $12,000 all inclusive option. &copy; HT Vet &middot; VISTA iQ</p>
+    <p class="disc">Model mirrors the VISTA iQ ROI report: each 40 second scan returns a low / moderate / high cancer risk result (60% / 30% / 10%). Per result revenue ($50 / $446 / $866) reconciles to the monthly breakdown of scans, FNAs (50% in-house at $66, 50% send-out at $225) and mass removals ($1,000). Payback and year one net based on the $14,000 all inclusive option. Illustrative estimate only; your figures depend on your own fee schedule and case mix. &copy; HT Vet &middot; VISTA iQ</p>
   </div>
 </div>
 
 <script>
 var HAS_FORM = false; /* variant flag: true = lead form at the end, false = CTA only */
 var NEXT_SUFFIX = '';
-var SCAN=50,FNA_IN=66,FNA_OUT=225,REMOVE=1000,DEVICE=12000;
+var SCAN=50,FNA_IN=66,FNA_OUT=225,REMOVE=1000,DEVICE=14000,LEASE=550;
 var SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
 var fmt=function(n){return '$'+Math.round(n).toLocaleString();};
 function calc(){
@@ -180,11 +192,28 @@ function calc(){
   document.getElementById('v3').textContent=fmt(v3);
   document.getElementById('v4').textContent=fmt(v4);
   document.getElementById('vtot').textContent=fmt(monthly);
-  var pb=DEVICE/monthly;
-  document.getElementById('pb1').textContent = pb<1?'<1 mo':Math.ceil(pb)+' mo';
-  var pb2=6000/Math.max(1,(monthly-200));
-  document.getElementById('pb2').textContent = pb2<1?'<1 mo':Math.ceil(pb2)+' mo';
-  document.getElementById('pb3').textContent = Math.round(monthly/550)+'×';
+
+  /* Pricing and payback. Guard against a zero caseload so nothing shows Infinity. */
+  var pb1=document.getElementById('pb1'), pb3=document.getElementById('pb3');
+  if(monthly<=0){
+    pb1.textContent='—'; pb3.textContent='—';
+  } else {
+    var pb=DEVICE/monthly;
+    pb1.textContent = pb<1?'<1 mo':Math.ceil(pb)+' mo';
+    var cover=monthly/LEASE;
+    pb3.textContent = (cover<1? cover.toFixed(1) : Math.round(cover))+'×';
+  }
+
+  /* Year one, net of the all inclusive device */
+  var net=annual-DEVICE;
+  document.getElementById('y1rev').textContent=fmt(annual);
+  document.getElementById('y1net').textContent=(net<0?'−':'')+fmt(Math.abs(net));
+  document.getElementById('y1net').style.color = net<0 ? 'var(--hi)' : 'var(--or)';
+  var note=document.getElementById('y1note');
+  if(monthly<=0){ note.textContent='Set your caseload above to see the year one picture.'; }
+  else if(net<0){ note.textContent='At this caseload the device is not covered inside year one.'; }
+  else { var mo=DEVICE/monthly;
+    note.textContent = 'Pays for itself in '+(mo<1?'under a month':Math.ceil(mo)+' months')+', then keeps running.'; }
 }
 document.getElementById('lumps').addEventListener('input',calc);
 
