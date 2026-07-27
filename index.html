@@ -1,21 +1,79 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>VISTA iQ · Lead Tools</title>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VISTA iQ | Interactive Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-:root{--or:#F6892D;--dark:#101820;--teal:#3d9aa1;--hot:#6a5f86;--mute:#7A7B7D;--hair:#E7E4DF;--page:#F4F2EF}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--page);font-family:Arial,Helvetica,sans-serif;color:var(--dark);padding:34px 22px;display:flex;justify-content:center;min-height:100vh}
-.wrap{width:100%;max-width:720px}
-.head{border-bottom:3px solid var(--or);padding-bottom:12px;margin-bottom:20px}
-.head .t{font-size:26px;font-weight:bold}.head .t b{color:var(--or)}
-.head .s{font-size:13px;color:var(--mute);margin-top:3px}
-a.card{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--hair);border-left:4px solid var(--or);border-radius:12px;padding:18px 20px;margin-bottom:12px;text-decoration:none;color:inherit}
-a.card:hover{border-color:var(--or);box-shadow:0 4px 14px rgba(246,137,45,.15)}
-.ico{width:46px;height:46px;border-radius:10px;background:#FCEEDD;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-.ct{flex:1}.ct .n{font-size:17px;font-weight:bold}.ct .d{font-size:12.5px;color:var(--mute);margin-top:2px;line-height:1.4}
-.stg{font-size:10px;font-weight:bold;padding:3px 9px;border-radius:20px;color:#fff}.stg.t{background:var(--or)}.stg.m{background:var(--teal)}.stg.b{background:var(--hot)}
-.arrow{font-size:20px;color:var(--or);font-weight:bold}.sig{font-size:11px;color:#a59d93;text-align:center;margin-top:18px}
-</style></head><body><div class="wrap">
-<div class="head"><div class="t"><b>VISTA iQ</b> · Lead Tools</div><div class="s">Interactive tools for the veterinary campaigns</div></div>
-<a class="card" href="lump-challenge.html"><div class="ico">&#128269;</div><div class="ct"><div class="n">Lump Challenge <span class="stg t">COLD</span></div><div class="d">Can you tell benign from cancer by sight? The interactive hook.</div></div><div class="arrow">&rarr;</div></a>
-<a class="card" href="readiness-score.html"><div class="ico">&#9989;</div><div class="ct"><div class="n">Readiness Score <span class="stg m">WARM</span></div><div class="d">Is your practice ready to adopt VISTA iQ? Self qualify.</div></div><div class="arrow">&rarr;</div></a>
-<a class="card" href="roi-calculator.html"><div class="ico">&#128176;</div><div class="ct"><div class="n">ROI Calculator <span class="stg b">HOT</span></div><div class="d">What lump scanning is worth to the clinic. The business case.</div></div><div class="arrow">&rarr;</div></a>
-<div class="sig">© HT Vet · VISTA iQ · lead tools</div></div></body></html>
+  /* VISTA iQ brand system (Brand Guidelines V1.0) */
+  :root{
+    --or:#F6892D; --or-hot:#E1720D; --ink:#101820; --gray:#C9CACC; --teal:#6CCAD0; --teal-d:#1E7F87;
+    --page:#FFFFFF; --line:#E3E5E7; --mut:#5B6167;
+    --mono:'Andale Mono','Roboto Mono',monospace; --sans:'Roboto',Arial,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--page);font-family:var(--sans);color:var(--ink);display:flex;justify-content:center;padding:0 18px 34px;min-height:100vh}
+  .wrap{width:100%;max-width:640px}
+  .hero{position:relative;overflow:hidden;border-radius:0 0 18px 18px;padding:34px 26px 30px;color:#fff;
+    background:radial-gradient(130% 170% at 12% 15%,#FFD84D 0%,#F6892D 45%,#E8480F 100%)}
+  .hero:after{content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.15) 1px,transparent 1.3px);background-size:7px 7px;pointer-events:none}
+  .hero>*{position:relative;z-index:1}
+  .logo{font-family:var(--mono);font-weight:700;font-size:22px;letter-spacing:1.5px}
+  .logo .sq{display:inline-block;width:7px;height:7px;background:var(--teal);margin-left:3px;vertical-align:super}
+  .tag{font-family:var(--mono);font-size:10px;letter-spacing:3px;margin-top:3px;opacity:.92}
+  h1{font-family:var(--mono);font-size:27px;font-weight:700;margin:20px 0 6px;text-transform:uppercase;letter-spacing:.5px;line-height:1.2}
+  .lead{font-size:15px;opacity:.95;max-width:460px}
+  .cards{margin-top:22px}
+  a.card{display:flex;gap:16px;align-items:center;text-decoration:none;color:inherit;background:#fff;
+    border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:14px;box-shadow:0 4px 14px rgba(16,24,32,.06);transition:.12s}
+  a.card:hover{border-color:var(--or);transform:translateY(-2px);box-shadow:0 8px 20px rgba(246,137,45,.18)}
+  .ic{width:46px;height:46px;border-radius:50%;flex:0 0 46px;display:flex;align-items:center;justify-content:center;
+    font-family:var(--mono);font-weight:700;font-size:20px;color:#fff;background:var(--or)}
+  a.card:nth-child(2) .ic{background:var(--teal-d)}
+  a.card:nth-child(3) .ic{background:var(--ink)}
+  .card h3{font-family:var(--mono);font-size:16px;font-weight:700;margin-bottom:2px;text-transform:uppercase;letter-spacing:.5px}
+  .card p{font-size:13px;color:var(--mut)}
+  .stg{font-size:9.5px;font-weight:700;letter-spacing:.8px;padding:3px 10px;border-radius:20px;color:#fff;font-family:var(--mono);white-space:nowrap}
+  .stg.c{background:var(--or)}.stg.w{background:var(--teal-d)}.stg.h{background:var(--ink)}
+  .card .go{margin-left:auto;color:var(--or);font-weight:700;font-size:20px}
+  .foot{font-size:11px;color:#9AA0A6;text-align:center;margin-top:18px;font-family:var(--mono);line-height:1.6}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="hero">
+    <div class="logo">VISTA iQ<span class="sq"></span></div>
+    <div class="tag">THE NEW FIRST STEP</div>
+    <h1>See it for yourself.</h1>
+    <p class="lead">Three quick, interactive tools for veterinary teams. No sign up, under two minutes each.</p>
+  </div>
+
+  <div class="cards">
+    <a class="card" href="lump-challenge.html?utm_source=hub">
+      <div class="ic">?</div>
+      <div><h3>Can you tell? <span class="stg c">COLD</span></h3><p>Six real case photos. Spot benign from cancer by sight and feel. Most vets can't.</p></div>
+      <div class="go">&rsaquo;</div>
+    </a>
+    <a class="card" href="readiness-score.html?utm_source=hub">
+      <div class="ic">%</div>
+      <div><h3>Cancer Readiness Score <span class="stg w">WARM</span></h3><p>60 seconds. See where your clinic's gap is.</p></div>
+      <div class="go">&rsaquo;</div>
+    </a>
+    <a class="card" href="roi-calculator.html?utm_source=hub">
+      <div class="ic">$</div>
+      <div><h3>Revenue Calculator <span class="stg h">HOT</span></h3><p>One slider. See what scanning lumps is worth.</p></div>
+      <div class="go">&rsaquo;</div>
+    </a>
+  </div>
+
+  <div class="foot">&copy; HT Vet &middot; VISTA iQ &middot; rule out cancer in the scanned mass with 98% NPV<br>
+  Variants without a lead form: <a href="lump-challenge-noform.html?utm_source=hub" style="color:var(--or)">challenge</a> &middot;
+  <a href="readiness-score-noform.html?utm_source=hub" style="color:var(--or)">readiness</a> &middot;
+  <a href="roi-calculator-noform.html?utm_source=hub" style="color:var(--or)">calculator</a></div>
+</div>
+</body>
+</html>

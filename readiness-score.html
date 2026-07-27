@@ -3,65 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cancer-Readiness Score | VISTA iQ</title>
+<title>Cancer Readiness Score | VISTA iQ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@500;700&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
+  /* VISTA iQ brand system (Brand Guidelines V1.0) */
   :root{
-    --orange:#E2742E; --orange-d:#C95F1E; --ink:#26211C; --muted:#7A726A;
-    --page:#F4F1EC; --card:#FFFFFF; --line:#E7E0D6;
-    --blue:#5566C4; --amber:#D99A2B; --red:#C24A45;
-    --mono:'IBM Plex Mono', ui-monospace, 'Courier New', monospace,monospace; --sans:'Inter', system-ui, -apple-system, Arial,system-ui,sans-serif;
+    --or:#F6892D; --or-hot:#E1720D; --ink:#101820; --gray:#C9CACC; --teal:#6CCAD0; --teal-d:#1E7F87;
+    --page:#FFFFFF; --line:#E3E5E7; --mut:#5B6167;
+    --lowbg:#E9F7F8; --modbg:#FDEFDD; --mod:#B3610A; --hi:#C63D33; --hibg:#FAE9E7; --okbg:#EAF6EE; --ok:#2f8a4e;
+    --mono:'Andale Mono','Roboto Mono',monospace; --sans:'Roboto',Arial,sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{background:var(--page);font-family:var(--sans);color:var(--ink);line-height:1.5;
     display:flex;justify-content:center;padding:24px 16px;min-height:100vh}
   .wrap{width:100%;max-width:560px}
-  .topbar{background:var(--orange);border-radius:12px 12px 0 0;padding:11px 18px;display:flex;justify-content:space-between;align-items:center}
-  .brand{font-family:var(--mono);font-weight:700;color:#fff;font-size:16px;letter-spacing:1px}
-  .brand span{opacity:.8;font-size:10px;letter-spacing:2px;margin-left:7px}
-  .pbar{width:120px;height:6px;background:rgba(255,255,255,.35);border-radius:6px;overflow:hidden}
+  .topbar{position:relative;overflow:hidden;border-radius:14px 14px 0 0;padding:14px 20px;display:flex;
+    justify-content:space-between;align-items:center;
+    background:radial-gradient(120% 160% at 15% 20%,#FFD84D 0%,#F6892D 42%,#E8480F 100%)}
+  .topbar:after{content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.16) 1px,transparent 1.3px);background-size:7px 7px;pointer-events:none}
+  .brand{position:relative;z-index:1}
+  .logo{font-family:var(--mono);font-weight:700;color:#fff;font-size:19px;letter-spacing:1.5px}
+  .logo .sq{display:inline-block;width:6px;height:6px;background:var(--teal);margin-left:3px;vertical-align:super}
+  .tag{font-family:var(--mono);color:#fff;font-size:9.5px;letter-spacing:2.5px;margin-top:2px;opacity:.92}
+  .pbar{position:relative;z-index:1;width:120px;height:6px;background:rgba(255,255,255,.35);border-radius:6px;overflow:hidden}
   .pbar i{display:block;height:100%;background:#fff;width:0;transition:.3s}
-  .card{background:var(--card);border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;
-    padding:26px;box-shadow:0 10px 30px rgba(0,0,0,.06)}
-  h1{font-family:var(--mono);font-size:25px;font-weight:700;color:var(--orange);line-height:1.15}
-  .qn{font-family:var(--mono);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .card{background:#fff;border:1px solid var(--line);border-top:none;border-radius:0 0 16px 16px;
+    padding:26px;box-shadow:0 10px 30px rgba(16,24,32,.08)}
+  h1{font-family:var(--mono);font-size:23px;font-weight:700;color:var(--ink);line-height:1.2;text-transform:uppercase;letter-spacing:.5px}
+  h1 .em{color:var(--or)}
+  .qn{font-family:var(--mono);font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut)}
   .qtext{font-size:19px;font-weight:600;margin:8px 0 18px;line-height:1.35}
-  .opt{border:2px solid var(--line);background:#fff;border-radius:12px;padding:14px 16px;cursor:pointer;
-    font-size:15px;font-weight:500;margin-bottom:10px;transition:.12s}
-  .opt:hover{border-color:var(--orange);background:#FCF3EC}
-  .lead{color:var(--muted);font-size:15px;margin-top:8px}
-  .gauge{margin:22px auto 6px;width:200px;height:110px;position:relative}
-  .scoreNum{font-family:var(--mono);font-size:56px;font-weight:700;text-align:center;line-height:1}
-  .scoreLbl{text-align:center;font-family:var(--mono);font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-top:2px}
-  .tier{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid}
-  .tier .tg{font-family:var(--mono);font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase}
-  .tier .tt{font-size:17px;font-weight:700;margin:4px 0}
-  .tier p{font-size:14px;color:#3a352f}
+  .opt{display:block;width:100%;text-align:left;border:2px solid var(--line);background:#fff;border-radius:999px;padding:13px 20px;cursor:pointer;
+    font-size:15px;font-weight:500;margin-bottom:10px;transition:.12s;font-family:var(--sans);color:var(--ink)}
+  .opt:hover{border-color:var(--or);background:#FEF3E8}
+  .lead{color:var(--mut);font-size:15px;margin-top:8px}
+  .scoreNum{font-family:var(--mono);font-size:58px;font-weight:700;text-align:center;line-height:1;margin-top:10px}
+  .scoreLbl{text-align:center;font-family:var(--mono);font-size:11.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--mut);margin-top:2px}
+  .tierbox{border-radius:12px;padding:16px 18px;margin:18px 0;border:1px solid}
+  .tierbox .tg{font-family:var(--mono);font-weight:700;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+  .tierbox .tt{font-size:17px;font-weight:700;margin:4px 0}
+  .tierbox p{font-size:14px;color:#394046}
   .recs{margin:14px 0}
   .rec{display:flex;gap:10px;font-size:14px;padding:6px 0;align-items:flex-start}
-  .rec b{color:var(--orange);font-family:var(--mono);font-weight:700}
-  .opp{background:var(--ink);border-radius:12px;padding:18px;text-align:center;margin:16px 0}
-  .opp .big{font-family:var(--mono);font-size:30px;font-weight:700;color:#fff}
-  .opp .cap{color:#d9cdba;font-size:13px;margin-top:4px}
-  .btn{display:block;width:100%;border:none;border-radius:12px;padding:14px;font-family:var(--sans);
-    font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;background:var(--orange);color:#fff;transition:.12s}
-  .btn:hover{background:var(--orange-d)}
-  .btn-ghost{background:#fff;color:var(--ink);border:2px solid var(--line);margin-top:10px}
-  form label{display:block;font-size:12px;font-weight:600;margin:11px 0 5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.5px}
-  form input{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;font-size:15px;font-family:var(--sans)}
-  form input:focus{outline:none;border-color:var(--orange)}
-  .disc{font-size:11px;color:#a59d93;margin-top:14px;text-align:center;line-height:1.5}
+  .rec b{color:var(--or);font-family:var(--mono);font-weight:700}
+  .opp{position:relative;overflow:hidden;border-radius:12px;padding:18px;text-align:center;margin:16px 0;color:#fff;
+    background:radial-gradient(130% 170% at 12% 15%,#FFD84D 0%,#F6892D 45%,#E8480F 100%)}
+  .opp:after{content:"";position:absolute;inset:0;
+    background-image:radial-gradient(rgba(255,255,255,.14) 1px,transparent 1.3px);background-size:7px 7px;pointer-events:none}
+  .opp>*{position:relative;z-index:1}
+  .opp .big{font-family:var(--mono);font-size:30px;font-weight:700}
+  .opp .cap{font-size:13px;margin-top:4px;opacity:.95}
+  .btn{display:block;width:100%;border:none;border-radius:999px;padding:15px;font-family:var(--sans);
+    font-weight:700;font-size:15px;cursor:pointer;margin-top:8px;background:var(--or);color:#fff;transition:.12s;text-align:center;text-decoration:none}
+  .btn:hover{background:var(--or-hot)}
+  .btn-ghost{background:#fff;color:var(--ink);border:2px solid var(--ink);margin-top:10px}
+  .btn-ghost:hover{background:var(--ink);color:#fff}
+  form label{display:block;font-size:11.5px;font-weight:700;margin:11px 0 5px;font-family:var(--mono);text-transform:uppercase;letter-spacing:.8px}
+  form input{width:100%;padding:12px 14px;border:1px solid var(--gray);border-radius:10px;font-size:15px;font-family:var(--sans)}
+  form input:focus{outline:none;border-color:var(--or)}
+  .chain{text-align:center;margin:2px 0 12px;font-size:13px}
+  .chain a{color:var(--or);font-weight:700;text-decoration:none}
+  .chain a:hover{color:var(--or-hot)}
+  .ok-box{background:var(--okbg);border:1px solid #A6D6B5;border-radius:12px;padding:18px;text-align:center}
+  .ok-box .big{font-family:var(--mono);font-size:22px;font-weight:700;color:var(--ok)}
+  .ok-box .cap{font-size:13.5px;color:#394046;margin-top:4px}
+  .disc{font-size:11px;color:#9AA0A6;margin-top:14px;text-align:center;line-height:1.5}
   .fade{animation:f .25s ease}@keyframes f{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><div class="brand">VISTA iQ<span>HT VET</span></div>
-    <div class="pbar" role="progressbar" aria-label="Assessment progress"><i id="pbar"></i></div></div>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo">VISTA iQ<span class="sq"></span></div>
+      <div class="tag">THE NEW FIRST STEP</div>
+    </div>
+    <div class="pbar" id="pwrap" role="progressbar" aria-label="Assessment progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><i id="pbar"></i></div>
+  </div>
   <div class="card" id="stage"></div>
 </div>
 
 <script>
-const Q=[
+var HAS_FORM = false; /* variant flag: true = lead form at the end, false = CTA only */
+var NEXT_SUFFIX = '';
+var Q=[
   { q:"When a dog presents with a new lump, what happens by default?",
     a:[["We recommend an aspirate every time",3],["Depends on the owner's budget",1],["We watch and recheck in a few weeks",0],["We refer it out",1]] },
   { q:"What share of owners decline an aspirate over cost?",
@@ -72,27 +100,28 @@ const Q=[
     a:[["Same day",3],["2 to 3 days",2],["4 to 7 days",1],["Over a week",0]] },
   { q:"Roughly how many lumps and bumps do you see a month?",
     a:[["Under 20",0],["20 to 50",1],["50 to 100",2],["Over 100",3]], vol:true },
-  { q:"Can you triage a mass for cancer risk in the room?",
-    a:[["Yes, in minutes",3],["Sort of, with extra steps",1],["No, not really",0],["Only by sending out",1]] },
-  { q:"How often does a benign-looking mass turn out malignant?",
-    a:[["I track it, it's real",3],["Sometimes, it surprises us",1],["Rarely in my experience",0],["Honestly not sure",0]] },
-  { q:"Biggest barrier to catching cancer earlier?",
-    a:[["Owner cost objections",1],["Time and workflow",1],["No in-room tooling",0],["We're in good shape",3]] },
+  { q:"Who could run a first line lump check in your clinic?",
+    a:[["A nurse or tech, freeing up the vet",3],["Only a veterinarian",1],["We send everything out",0],["Depends on the day",1]] },
+  { q:"About 15% of lumps are malignant. How many slip through as 'probably nothing'?",
+    a:[["Few, we test enough to be sure",3],["Some slip through",1],["Probably more than we'd like",0],["We don't really track it",0]] },
+  { q:"Only about 39% of lumps ever get tested. What holds it back for you?",
+    a:[["Owner cost and how invasive it is",1],["Time and a packed schedule",1],["No fast, non-invasive first step",0],["We already test most of them",3]] },
 ];
-let i=0,score=0,max=Q.length*3,volIdx=2;
-const SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
-const stage=document.getElementById('stage'), pbar=document.getElementById('pbar');
+var i=0,score=0,max=Q.length*3,volIdx=2;
+var SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
+var stage=document.getElementById('stage'), pbar=document.getElementById('pbar');
 
 function renderQ(){
   pbar.style.width=(i/Q.length*100)+'%';
+  document.getElementById('pwrap').setAttribute('aria-valuenow',Math.round(i/Q.length*100));
   stage.className='card fade';
-  const o=Q[i];
+  var o=Q[i];
   stage.innerHTML='<div class="qn">Question '+(i+1)+' of '+Q.length+'</div>'+
     '<div class="qtext">'+o.q+'</div>'+
-    o.a.map((opt,k)=>'<button type="button" class="opt" style="display:block;width:100%;text-align:left;font-family:var(--sans)" onclick="pick('+k+')">'+opt[0]+'</button>').join('');
+    o.a.map(function(opt,k){return '<button type="button" class="opt" onclick="pick('+k+')">'+opt[0]+'</button>';}).join('');
 }
 function pick(k){
-  const o=Q[i];
+  var o=Q[i];
   score+=o.a[k][1];
   if(o.vol) volIdx=k;
   i++;
@@ -100,44 +129,37 @@ function pick(k){
 }
 function renderResult(){
   pbar.style.width='100%';
+  document.getElementById('pwrap').setAttribute('aria-valuenow',100);
   stage.className='card fade';
-  const pct=Math.round(score/max*100);
-  let tg,tt,col,bg,note,recs;
-  if(pct<45){tg='Major gap';tt='Cancer is slipping past your front door';col='var(--red)';bg='#FBEAE9';
+  var pct=Math.round(score/max*100);
+  var tg,tt,col,bg,bd,note,recs;
+  if(pct<45){tg='Major gap';tt='Cancer is slipping past your front door';col='var(--hi)';bg='var(--hibg)';bd='#EFC7C3';
     note="Today, masses are mostly judged by sight and feel, and cost objections are sending cases out untriaged. That is exactly where malignancies hide and revenue leaks.";
-    recs=["Put an in-room, 40-second cancer triage on every lump","Remove the cost objection that kills aspirates","Stop the watch-and-recheck cases that should be acted on"];
-  } else if(pct<72){tg='Room to tighten';tt='Solid instincts, leaky process';col='#8a610f';bg='#FBF1DC';
+    recs=["Put an in-room, 40 second cancer triage on every lump","Remove the cost objection that kills aspirates","Act on the watch and recheck cases that need answers now"];
+  } else if(pct<72){tg='Room to tighten';tt='Solid instincts, leaky process';col='var(--mod)';bg='var(--modbg)';bd='#F3DDBB';
     note="You act on masses, but the path is slow or inconsistent, and a share of owners still walk without answers. A faster in-room step closes that gap.";
     recs=["Bring cytology decisions into the same visit","Convert the owners who currently decline","Make triage consistent across every vet on the floor"];
-  } else {tg='Ahead of the curve';tt='Strong, now scale the advantage';col='#2f8a4e';bg='#EAF6EE';
+  } else {tg='Ahead of the curve';tt='Strong, now scale the advantage';col='var(--ok)';bg='var(--okbg)';bd='#A6D6B5';
     note="You already treat masses seriously. The opportunity is throughput and proof: catch more, faster, and turn it into a visible clinic service.";
     recs=["Standardize the workflow you already do well","Market cancer screening as a clinic service","Use scan data to drive earlier interventions"];
   }
-  const vols=[15,35,75,120][volIdx];
-  const opp=Math.round(vols*250*12/1000)*1000;
+  var vols=[15,35,75,120][volIdx];
+  var opp=Math.round(vols*250*12/1000)*1000;
+  var endBlock;
+    endBlock='<div><a class="btn" href="https://ht-vet.com/talk-to-sales/?utm_source=readiness_score&utm_medium=tool&utm_campaign=vista_tools">Book a Lunch &amp; Learn</a>'+
+      '<button class="btn btn-ghost" onclick="restart()">Start over</button></div>';
   stage.innerHTML=
-    '<h1>Your Cancer-Readiness Score</h1>'+
+    '<h1>Your Cancer <span class="em">Readiness Score</span></h1>'+
     '<div class="scoreNum" style="color:'+col+'">'+pct+'</div><div class="scoreLbl">out of 100</div>'+
-    '<div class="tier" style="background:'+bg+';border-color:'+col+'33">'+
+    '<div class="tierbox" style="background:'+bg+';border-color:'+bd+'">'+
       '<div class="tg" style="color:'+col+'">'+tg+'</div><div class="tt">'+tt+'</div><p>'+note+'</p></div>'+
-    '<div class="recs">'+recs.map((r,n)=>'<div class="rec"><b>'+(n+1)+'</b><span>'+r+'</span></div>').join('')+'</div>'+
-    '<div class="opp"><div class="big">~'+('$'+opp.toLocaleString())+'/yr</div>'+
+    '<div class="recs">'+recs.map(function(r,n){return '<div class="rec"><b>'+(n+1)+'</b><span>'+r+'</span></div>';}).join('')+'</div>'+
+    '<div class="opp"><div class="big">~$'+opp.toLocaleString()+'/yr</div>'+
       '<div class="cap">directional estimate of revenue VISTA iQ could add at your lump volume</div></div>'+
-    '<p style="text-align:center;margin:-4px 0 12px;font-size:13px"><a href="roi-calculator.html?utm_source=readiness" style="color:var(--orange);font-weight:700;text-decoration:none">See the full revenue math &rsaquo;</a></p>'+
-    '<div id="formwrap"><form onsubmit="return submitForm(event)">'+
-      '<label>Full name</label><input required placeholder="Dr. Jane Smith">'+
-      '<label>Clinic email</label><input required type="email" placeholder="you@clinic.com">'+
-      '<label>Clinic name</label><input required placeholder="Riverside Animal Hospital">'+
-      '<button class="btn" type="submit">Get my full report + book a Lunch &amp; Learn</button></form>'+
-      '<button class="btn btn-ghost" onclick="restart()">Start over</button></div>'+
-    '<p class="disc">Directional self-assessment for veterinary teams. Revenue estimate uses the VISTA iQ ROI model (~$250 per lump scanned). © HT Vet · VISTA iQ</p>';
+    '<p class="chain"><a href="roi-calculator'+NEXT_SUFFIX+'.html?utm_source=readiness">See the full revenue math &rsaquo;</a></p>'+
+    endBlock+
+    '<p class="disc">Directional self assessment for veterinary teams. Revenue estimate uses the VISTA iQ ROI model (~$250 per lump scanned). &copy; HT Vet &middot; VISTA iQ</p>';
 }
-function submitForm(e){e.preventDefault();
-  document.getElementById('formwrap').innerHTML=
-    '<div class="opp" style="background:#1f6b3f"><div class="big" style="font-size:26px">You’re booked in.</div>'+
-    '<div class="cap">Your full readiness report is on its way. A VISTA iQ specialist will reach out to set your Lunch &amp; Learn.</div></div>'+
-    '<p class="disc">[Prototype] In production this posts to HubSpot (source: '+SRC+', score: '+Math.round(score/max*100)+'/100) and triggers the nurture flow.</p>';
-  return false;}
 function restart(){i=0;score=0;renderQ();}
 renderQ();
 </script>
