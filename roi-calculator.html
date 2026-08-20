@@ -110,9 +110,9 @@
     <p class="lead">Every lump that walks in is a clinical decision and a revenue decision. Here is what scanning them is worth.</p>
 
     <div class="sliderrow">
-      <div class="top"><label>Lumps &amp; bumps per month</label><span class="val" id="lumpVal">40</span></div>
-      <input type="range" id="lumps" min="0" max="100" step="5" value="40" aria-label="Lumps and bumps seen per month">
-      <div class="hint">Drag the slider to match your clinic's caseload.</div>
+      <div class="top"><label>Lumps &amp; bumps <b style="color:var(--or)">per day</b></label><span class="val" id="lumpVal">2</span></div>
+      <input type="range" id="lumps" min="0" max="10" step="1" value="2" aria-label="Lumps and bumps seen per day">
+      <div class="hint">Drag to match a normal day. <span id="permonth">That is about 44 a month.</span></div>
     </div>
 
     <div class="hero">
@@ -141,49 +141,51 @@
       <tr class="tot"><td>Total income per month</td><td class="r" id="vtot">$9,995</td></tr>
     </table>
 
-    <div class="sec">Pricing &amp; payback</div>
+    <div class="sec">Two ways to own it</div>
     <div class="pricing two">
-      <div class="price best"><div class="badge">Best value</div><div class="nm">All inclusive</div>
-        <div class="amt">$14,000</div><div class="sub">3 yrs service included</div>
-        <div class="pb" id="pb1">&lt;1 mo</div><div class="pbl">to pay off</div></div>
+      <div class="price best"><div class="badge">Best value</div><div class="nm">Purchase</div>
+        <div class="amt">$14,000</div><div class="sub">one time &middot; the device is yours</div>
+        <div class="pb" id="pb1">&lt;1 mo</div><div class="pbl">to pay back</div></div>
       <div class="price"><div class="nm">Monthly lease</div>
         <div class="amt">$550</div><div class="sub">per month</div>
-        <div class="pb" id="pb3">18&times;</div><div class="pbl">&times; monthly lease</div></div>
+        <div class="pb" id="pb3">18&times;</div><div class="pbl" id="pb3l">return on every lease $</div></div>
     </div>
 
-    <div class="sec">Year one, after the device</div>
+    <div class="sec">Buy it: your net in one year</div>
     <div class="netbox">
-      <div class="netrow"><span>Added revenue, year one</span><b id="y1rev">$119,936</b></div>
-      <div class="netrow"><span>Less all inclusive device</span><b id="y1dev">&minus;$14,000</b></div>
-      <div class="netrow net"><span>Net in year one</span><b id="y1net">$105,936</b></div>
-      <div class="netnote" id="y1note">Pays for itself in under a month, then keeps running.</div>
+      <div class="netrow"><span>Added revenue, year one</span><b id="y1rev">$132,000</b></div>
+      <div class="netrow"><span>Less the device, one time</span><b id="y1dev">&minus;$14,000</b></div>
+      <div class="netrow net"><span>Net in one year</span><b id="y1net">$118,000</b></div>
+      <div class="netnote" id="y1note">The device is a fraction of what it brings in, and after that it is yours.</div>
     </div>
 
     <div id="endblock" style="margin-top:18px"></div>
-    <p class="disc">Model mirrors the VISTA iQ ROI report: each 40 second scan returns a low / moderate / high cancer risk result (60% / 30% / 10%). Per result revenue ($50 / $446 / $866) reconciles to the monthly breakdown of scans, FNAs (50% in-house at $66, 50% send-out at $225) and mass removals ($1,000). Payback and year one net based on the $14,000 all inclusive option. Illustrative estimate only; your figures depend on your own fee schedule and case mix. &copy; HT Vet &middot; VISTA iQ</p>
+    <p class="disc">Model mirrors the VISTA iQ ROI report: each 40 second scan returns a low / moderate / high cancer risk result (60% / 30% / 10%). Per result revenue ($50 / $446 / $866) reconciles to the breakdown of scans, FNAs (50% in-house at $66, 50% send-out at $225) and mass removals ($1,000). Daily caseload is converted to monthly at 22 working days. Purchase net in one year is added revenue minus the one time $14,000 device. Lease ROI is monthly income divided by the $550 monthly lease. Illustrative estimate only; your figures depend on your own fee schedule and case mix. &copy; HT Vet &middot; VISTA iQ</p>
   </div>
 </div>
 
 <script>
 var HAS_FORM = false; /* variant flag: true = lead form at the end, false = CTA only */
 var NEXT_SUFFIX = '';
-var SCAN=50,FNA_IN=66,FNA_OUT=225,REMOVE=1000,DEVICE=14000,LEASE=550;
+var SCAN=50,FNA_IN=66,FNA_OUT=225,REMOVE=1000,DEVICE=14000,LEASE=550,WORKDAYS=22;
 var SRC=new URLSearchParams(location.search).get('utm_source')||'direct';
 var fmt=function(n){return '$'+Math.round(n).toLocaleString();};
 function calc(){
-  var L=+document.getElementById('lumps').value;
+  var perDay=+document.getElementById('lumps').value;   /* slider is per DAY */
+  var L=perDay*WORKDAYS;                                 /* scans per month */
   var low=L*0.6, mod=L*0.3, high=L*0.1;
   var fnas=mod+high;
   var removals=0.25*mod + (2/3)*high;
   var v1=L*SCAN, v2=fnas*0.5*FNA_IN, v3=fnas*0.5*FNA_OUT, v4=removals*REMOVE;
   var monthly=v1+v2+v3+v4, annual=monthly*12;
-  document.getElementById('lumpVal').textContent=L;
+  document.getElementById('lumpVal').textContent=perDay;
+  document.getElementById('permonth').textContent='That is about '+Math.round(L)+' a month.';
   document.getElementById('annual').textContent=fmt(annual);
   document.getElementById('monthly').textContent='about '+fmt(monthly)+' every month';
   document.getElementById('t1n').textContent=Math.round(low);
   document.getElementById('t2n').textContent=Math.round(mod);
   document.getElementById('t3n').textContent=Math.round(high);
-  document.getElementById('f1').textContent=L+' × $50';
+  document.getElementById('f1').textContent=Math.round(L)+' × $50';
   document.getElementById('f2').textContent=Math.round(fnas*0.5)+' × $66';
   document.getElementById('f3').textContent=Math.round(fnas*0.5)+' × $225';
   document.getElementById('f4').textContent=removals.toFixed(1)+' × $1,000';
@@ -193,18 +195,19 @@ function calc(){
   document.getElementById('v4').textContent=fmt(v4);
   document.getElementById('vtot').textContent=fmt(monthly);
 
-  /* Pricing and payback. Guard against a zero caseload so nothing shows Infinity. */
-  var pb1=document.getElementById('pb1'), pb3=document.getElementById('pb3');
+  /* Purchase payback (months) and lease ROI (income per lease dollar). Guard zero caseload. */
+  var pb1=document.getElementById('pb1'), pb3=document.getElementById('pb3'), pb3l=document.getElementById('pb3l');
   if(monthly<=0){
-    pb1.textContent='—'; pb3.textContent='—';
+    pb1.textContent='—'; pb3.textContent='—'; pb3l.textContent='return on every lease $';
   } else {
     var pb=DEVICE/monthly;
     pb1.textContent = pb<1?'<1 mo':Math.ceil(pb)+' mo';
-    var cover=monthly/LEASE;
-    pb3.textContent = (cover<1? cover.toFixed(1) : Math.round(cover))+'×';
+    var roi=monthly/LEASE;                               /* lease ROI = monthly income / monthly lease */
+    pb3.textContent = (roi<10? roi.toFixed(1) : Math.round(roi))+'×';
+    pb3l.textContent = 'back on every $1 of lease';
   }
 
-  /* Year one, net of the all inclusive device */
+  /* Purchase: net in one year = added revenue minus the one time device */
   var net=annual-DEVICE;
   document.getElementById('y1rev').textContent=fmt(annual);
   document.getElementById('y1net').textContent=(net<0?'−':'')+fmt(Math.abs(net));
@@ -212,8 +215,7 @@ function calc(){
   var note=document.getElementById('y1note');
   if(monthly<=0){ note.textContent='Set your caseload above to see the year one picture.'; }
   else if(net<0){ note.textContent='At this caseload the device is not covered inside year one.'; }
-  else { var mo=DEVICE/monthly;
-    note.textContent = 'Pays for itself in '+(mo<1?'under a month':Math.ceil(mo)+' months')+', then keeps running.'; }
+  else { note.textContent='The device is a fraction of what it brings in, and after that it is yours.'; }
 }
 document.getElementById('lumps').addEventListener('input',calc);
 
